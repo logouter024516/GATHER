@@ -13,37 +13,28 @@ user_collection = userdb["user"]
 stockdb = client["stocks"]
 stock_domestic_collection = stockdb["domestic"]
 stock_international_collection = stockdb["international"]
-rate_collection = stockdb["rate"]
 gmtodt_collection = stockdb["gmtodt"]
-sasungin = stock_international_collection.find_one({"company_name": "SASUNG"})["price"]
-pear = stock_international_collection.find_one({"company_name": "PEAR"})["price"]
-envidia = stock_international_collection.find_one({"company_name": "ENVIDIA"})["price"]
-hiot = stock_international_collection.find_one({"company_name": "HIOTGAMES"})["price"]
-qalmart = stock_international_collection.find_one({"company_name": "QALMART"})["price"]
-ppizer = stock_international_collection.find_one({"company_name": "PPIZER"})["price"]
-sasungdo = stock_domestic_collection.find_one({"company_name": "SASUNG"})["price"]
-og= stock_domestic_collection.find_one({"company_name": "OG"})["price"]
-jongshim = stock_domestic_collection.find_one({"company_name": "jongshim"})["price"]
-lyundai = stock_domestic_collection.find_one({"company_name": "lyundai"})["price"]
-rate = rate_collection.find_one({"codecheck": "code"})["rate"]
-gmtodt = gmtodt_collection.find_one({"codecheck": "code"})["gmtodt"]
 def int_stock_price(stock_name,price,rate):
     return_price = int(price*rate)
-
-    stock_international_collection.update_one({"company_name":stock_name}, {"$set":{"price":int(return_price/10*10)}})
+    if return_price == 0:
+        stock_international_collection.update_one({"company_name": stock_name}, {"$set": {"price": int(15)}})
+        stock_international_collection.update_one({"company_name": stock_name}, {"$set": {"rate": rate}})
+    else:
+        stock_international_collection.update_one({"company_name":stock_name}, {"$set":{"price":int(return_price)}})
+        stock_international_collection.update_one({"company_name": stock_name}, {"$set": {"rate": rate}})
     return return_price
 def dom_stock_price(stock_name,price,rate):
     return_price = int(price*rate)
-    stock_domestic_collection.update_one({"company_name":stock_name}, {"$set":{"price":int(return_price/10*10)}})
+    if return_price == 0:
+        stock_domestic_collection.update_one({"company_name": stock_name}, {"$set": {"price": int(50000)}})
+        stock_domestic_collection.update_one({"company_name": stock_name}, {"$set": {"rate": rate}})
+    else:
+        stock_domestic_collection.update_one({"company_name":stock_name}, {"$set":{"price":int(return_price)}})
+        stock_domestic_collection.update_one({"company_name": stock_name}, {"$set": {"rate": rate}})
 def gmtodt_price():
     return_price = random.randint(900, 1500)
     gmtodt_collection.update_one({"codecheck":"code"}, {"$set":{"gmtodt":int(return_price)}})
 while(True):
-    stockdb = client["stocks"]
-    stock_domestic_collection = stockdb["domestic"]
-    stock_international_collection = stockdb["international"]
-    rate_collection = stockdb["rate"]
-    gmtodt_collection = stockdb["gmtodt"]
     sasungin = stock_international_collection.find_one({"company_name": "SASUNG"})["price"]
     pear = stock_international_collection.find_one({"company_name": "PEAR"})["price"]
     envidia = stock_international_collection.find_one({"company_name": "ENVIDIA"})["price"]
@@ -54,21 +45,29 @@ while(True):
     og = stock_domestic_collection.find_one({"company_name": "OG"})["price"]
     jongshim = stock_domestic_collection.find_one({"company_name": "jongshim"})["price"]
     lyundai = stock_domestic_collection.find_one({"company_name": "lyundai"})["price"]
-    rate = rate_collection.find_one({"codecheck": "code"})["rate"]
     gmtodt = gmtodt_collection.find_one({"codecheck": "code"})["gmtodt"]
-    rate = random.randint(70, 130) / 100
-    print(sasungin, pear, envidia, hiot, qalmart, ppizer, sasungdo, og, jongshim, lyundai, rate)
+    print(sasungin, pear, envidia, hiot, qalmart, ppizer, sasungdo, og, jongshim, lyundai)
+    rate = random.randint(80, 130) / 100
     sasungin = int_stock_price("SASUNG",sasungin, rate)
+    rate = random.randint(80, 130) / 100
     pear = int_stock_price("PEAR",pear, rate)
+    rate = random.randint(80, 130) / 100
     envidia = int_stock_price("ENVIDIA",envidia, rate)
+    rate = random.randint(80, 130) / 100
     hiot = int_stock_price("HIOTGAMES",hiot, rate)
+    rate = random.randint(80, 130) / 100
     qalmart = int_stock_price("QALMART",qalmart, rate)
+    rate = random.randint(80, 130) / 100
     ppizer = int_stock_price("PPIZER",ppizer, rate)
+    rate = random.randint(80, 130) / 100
     sasungdo = dom_stock_price("SASUNG",sasungdo, rate)
+    rate = random.randint(80, 130) / 100
     og = dom_stock_price("OG",og, rate)
+    rate = random.randint(80, 130) / 100
     jongshim = dom_stock_price("jongshim",jongshim, rate)
+    rate = random.randint(80, 130) / 100
     lyundai = dom_stock_price("lyundai",lyundai, rate)
-    rate = rate_collection.update_one({"codecheck":"code"}, {"$set":{"rate":rate}})
+    rate = random.randint(80, 130) / 100
     gmtodt = gmtodt_price()
     time.sleep(60)
 

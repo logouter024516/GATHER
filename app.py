@@ -73,7 +73,7 @@ async def 공지하기(interaction: discord.Interaction, title: str, inputs: str
         await interaction.response.send_message(content="당신은 관리자임을 인증하기 못하셨어요! 이 명령어는 관리자만 사용할 수 있습니다!", ephemeral=True)
 
 
-@bot.tree.command(name="내통장", description="통장을 확인합니다!")
+@bot.tree.command(name="내통장", description="통장을 확인해요!")
 async def 내통장(interaction: discord.Interaction):
     user = interaction.user  # 명령을 호출한 유저
     db_user = user_collection.find_one({"user_id": user.id})
@@ -109,6 +109,7 @@ async def 내통장(interaction: discord.Interaction):
             tier = 999
             master = 1
         embed.add_field(name="현재 잔액(Game Money): ", value=f"{balance}GM", inline=False)
+        embed.add_field(name="현재 잔액(Dotori Token): ", value=f"{balancedt}DT", inline=False)
         embed.add_field(name="현재 랭크: ", value=f"{rank} {tier}", inline=False)
         if master == 1:
             embed.add_field(name="마스터 랭크: ", value="당신은 1억 1천만GM 이상을 보유하고 있으므로 마스터등급입니다! 축하합니다!!", inline=False)
@@ -123,7 +124,7 @@ async def 심심하다(interaction: discord.Interaction):
     await interaction.response.send_message("어?쩔? 24시간 동안 컴퓨터 세상에서 사는 나보다는 나을 듯 ㅋ", ephemeral=False)
 
 
-@bot.tree.command(name='세계주식소개', description='세계 주식 중 게더 주식에 업로드 되어있는 주식들의 이름을 표시합니다!')
+@bot.tree.command(name='세계주식소개', description='세계 주식 중 게더 주식에 업로드 되어있는 주식들의 이름을 표시해요!')
 async def 세계주식소개(interaction: discord.Interaction):
     embed = discord.Embed(
         title="게더 주식-NUSS(NAMUU증권거래소)",
@@ -144,7 +145,7 @@ async def 세계주식소개(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-@bot.tree.command(name='국내주식소개', description='국내 주식 중 게더 주식에 업로드 되어있는 주식들의 이름을 표시합니다!')
+@bot.tree.command(name='국내주식소개', description='국내 주식 중 게더 주식에 업로드 되어있는 주식들의 이름을 표시해요!')
 async def 국내주식소개(interaction: discord.Interaction):
     embed = discord.Embed(
         title="게더 주식-ROGOSPI(게이머공화국유가증권시장)",
@@ -162,7 +163,7 @@ async def 국내주식소개(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-@bot.tree.command(name='주식시장', description='현재 주식의 가격을 확인합니다!')
+@bot.tree.command(name='주식시장', description='현재 주식의 가격을 확인해요!')
 @app_commands.choices(국내야세계야=[
     app_commands.Choice(name="세계", value="세계주식"),
     app_commands.Choice(name="국내", value="국내주식"), ])
@@ -304,7 +305,7 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
         await interaction.response.send_message(embed=embed)
 
 
-@bot.tree.command(name='주식', description='주식을 구매하거나 판매합니다!')
+@bot.tree.command(name='주식', description='주식을 구매하거나 판매해요!')
 @app_commands.choices(판매니구매니=[
     app_commands.Choice(name="판매", value="주식판매"),
     app_commands.Choice(name="구매", value="주식구매"),
@@ -391,14 +392,14 @@ async def 주식(interaction: discord.Interaction, 판매니구매니: app_comma
                 upsert=True
             )
             await interaction.response.send_message(
-                f"{db_stock_name} 주식을 성공적으로 구매했습니다! (총 {total_amount:,} GM 사용)", ephemeral=True
+                f"{db_stock_name} 주식을 {total_amount:,} GM에 성공적으로 구입했습니다!", ephemeral=True
             )
 
         elif 판매니구매니.value == "주식판매":
             # 보유 주식이 충분한지 확인
             if current_stock < num:
                 await interaction.response.send_message(
-                    f"{db_stock_name} 주식이 부족합니다. 현재 보유 주식: {current_stock}주", ephemeral=True
+                    f"현재 보유하고 있는 주식이 부족합니다. 현재 보유하고 있는 {db_stock_name} 주식: {current_stock}주", ephemeral=True
                 )
                 return
 
@@ -409,24 +410,15 @@ async def 주식(interaction: discord.Interaction, 판매니구매니: app_comma
                 upsert=True
             )
 
-            if total_amount < 0:
-                await interaction.response.send_message(
-                    f"{db_stock_name} 주식을 성공적으로 판매했습니다! (총 {abs(total_amount):,} GM 손해)", ephemeral=True
-                )
-            elif total_amount == 0:
-                await interaction.response.send_message(
-                    f"{db_stock_name} 주식을 성공적으로 판매했습니다! (이득도 손해도 없습니다)", ephemeral=True
-                )
-            else:
-                await interaction.response.send_message(
-                    f"{db_stock_name} 주식을 성공적으로 판매했습니다! (총 {total_amount:,} GM 이득)", ephemeral=True
-                )
+            await interaction.response.send_message(
+                f"{db_stock_name} 주식을 {total_amount:,}GM에 성공적으로 팔았습니다!", ephemeral=True
+            )
 
     else:
         await interaction.response.send_message("잘못된 주식 코드입니다.", ephemeral=True)
 
 
-@bot.tree.command(name="내주식", description="현재 보유한 주식을 확인합니다!")
+@bot.tree.command(name="내주식", description="현재 보유한 주식을 확인해요!")
 async def 내주식(interaction: discord.Interaction):
     user_id = interaction.user.id
 
@@ -519,6 +511,43 @@ async def 초대하기(interaction: discord.Interaction):
     view.add_item(button1)
     await interaction.response.send_message(view=view)
 
+@bot.tree.command(name='환율', description='현재 GM과 DT간의 환율을 알려드려요!')
+async def 환율(interaction: discord.Interaction):
+    exchange_rates = gmtodt_collection.find_one({"codecheck": "code"})["gmtodt"]
+    await interaction.response.send_message(f"현재 1DT(Dotori Token)의 가격은 {exchange_rates}GM입니다!")
+
+@bot.tree.command(name='환율투자', description='DT를 구매해요!')
+@app_commands.choices(판매야구매야=[
+    app_commands.Choice(name="판매", value="DT판매"),
+    app_commands.Choice(name="구매", value="DT구매"),
+])
+async def 환율투자(interaction: discord.Interaction, 판매야구매야: app_commands.Choice[str], num: int):
+    exchange_rates = gmtodt_collection.find_one({"codecheck": "code"})["gmtodt"]
+    db_user = user_collection.find_one({"user_id": user.id})
+    balance = db_user.get("balancegm", 0)
+    balancedt = db_user.get("balancedt", 0)
+    total_price = exchange_rates * num
+    if 판매야구매야.value == DT구매:
+        if balance - total_amount < 0:
+            await interaction.response.send_message(f현재 보유하고 있는 GM이 부족합니다. 현재 보유하고 있는 GM: {balance}GM", ephemeral=True)
+        else:
+            user_collection.update_one(
+                {"user_id": user_id},
+                {"$inc": {"balancegm": -total_amount, "balancedt": num}},
+                upsert=True
+            )
+            await interaction.response.send_message(f"성공적으로 {total_price}GM을 사용해 {num}DT를 구입했습니다!", ephemeral=True)
+    else:
+        if balancedt - num < 0:
+            await interaction.response.send_message(f현재 보유하고 있는 DT이 부족합니다. 현재 보유하고 있는 DT: {balancedt}DT", ephemeral=True)
+        else:
+            user_collection.update_one(
+                {"user_id": user_id},
+                {"$inc": {"balancegm":+total_amount, "balancedt": -num}},
+                upsert=True
+            )
+            await interaction.response.send_message(f"성공적으로 {num}DT를 팔아 {total_price}GM을 얻었습니다!", ephemeral=True)
+        
 
 @bot.tree.command(name='도움말', description="게더의 명령어를 알려드려요!")
 async def 도움말(interaction: discord.Interaction):
@@ -539,6 +568,8 @@ async def 도움말(interaction: discord.Interaction):
     embed.add_field(name="/유저등록", value="게더 주식서비스에 가입해요!", inline=False)
     embed.add_field(name="/유저탈퇴", value="게더 주식서비스에서 탈퇴해요!", inline=False)
     embed.add_field(name="/내통장", value="게더 주식의 통장을 확인해요!", inline=False)
+    embed.add_field(name="/환율", value="현재 DT와 GM 간의 확률을 확인해요!", inline=False)
+    embed.add_field(name="/환율투자", value="환율의 차익으로 투자를 해요!", inline=False)
     embed.add_field(name="/내주식", value="보유한 게더 주식을 확인해요!", inline=False)
     embed.add_field(name="/주식시장", value="현재 주식의 가격을 확인해요!", inline=False)
     embed.add_field(name="/가위바위보하기", value="저와 가위바위보 한판을 진행하요!", inline=False)
@@ -568,7 +599,7 @@ async def 정보(interaction: discord.Interaction):
     embed.add_field(name="작동 시간", value=uptime_str, inline=False)
     embed.add_field(name="나이", value="약 5개월", inline=False)
     embed.add_field(name="제작자", value="devloggerkr, poshil", inline=False)  # 제작자 정보
-    embed.add_field(name="버전", value="Ver. βeta 0.3.1", inline=False)
+    embed.add_field(name="버전", value="Ver. βeta 0.4.0", inline=False)
     embed.set_footer(text="GATHER")
     # 봇 추가 버튼 생성
     view = discord.ui.View()
@@ -581,7 +612,7 @@ async def 정보(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, view=view)
 
 
-@bot.tree.command(name='유저등록', description='유저를 게더 주식에 등록합니다.')
+@bot.tree.command(name='유저등록', description='유저를 게더 주식에 등록해요!')
 async def 유저등록(interaction: discord.Interaction):
     user_id = interaction.user.id  # 유저 ID 가져오기
     user_data = user_collection.find_one({"user_id": user_id})  # DB에서 유저 검색
@@ -620,7 +651,7 @@ async def 유저등록(interaction: discord.Interaction):
         await channel.send(f"{user_name}님이{kst_now.strftime('%Y-%m-%d %H:%M:%S')}에 게더 주식에 등록되었습니다!")
 
 
-@bot.tree.command(name='유저탈퇴', description='데이터베이스에서 유저를 삭제합니다.')
+@bot.tree.command(name='유저탈퇴', description='데이터베이스에서 유저를 삭제해요!')
 async def 유저탈퇴(interaction: discord.Interaction):
     user_id = interaction.user.id  # 유저 ID 가져오기
     user_name = interaction.user.name

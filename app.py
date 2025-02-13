@@ -529,7 +529,7 @@ async def 환율투자(interaction: discord.Interaction, 판매야구매야: app
     total_price = exchange_rates * num
     if 판매야구매야.value == DT구매:
         if balance - total_amount < 0:
-            await interaction.response.send_message(f현재 보유하고 있는 GM이 부족합니다. 현재 보유하고 있는 GM: {balance}GM", ephemeral=True)
+            await interaction.response.send_message(f"현재 보유하고 있는 GM이 부족합니다. 현재 보유하고 있는 GM: {balance}GM", ephemeral=True)
         else:
             user_collection.update_one(
                 {"user_id": user_id},
@@ -539,7 +539,7 @@ async def 환율투자(interaction: discord.Interaction, 판매야구매야: app
             await interaction.response.send_message(f"성공적으로 {total_price}GM을 사용해 {num}DT를 구입했습니다!", ephemeral=True)
     else:
         if balancedt - num < 0:
-            await interaction.response.send_message(f현재 보유하고 있는 DT이 부족합니다. 현재 보유하고 있는 DT: {balancedt}DT", ephemeral=True)
+            await interaction.response.send_message(f"현재 보유하고 있는 DT이 부족합니다. 현재 보유하고 있는 DT: {balancedt}DT", ephemeral=True)
         else:
             user_collection.update_one(
                 {"user_id": user_id},

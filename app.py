@@ -6,16 +6,17 @@ import pytz
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
-import random  
+import random
+
 load_dotenv()  # .env 파일 로드
 token = os.getenv("DISCORD_BOT_TOKEN")
-MONGO_URI = os.getenv("MONGO_URI")      
+MONGO_URI = os.getenv("MONGO_URI")
 # MongoDB 클라이언트 설정
 client = MongoClient(MONGO_URI)
 userdb = client["user"]  # 데이터베이스 이름
 user_collection = userdb["user"]
 
-stockdb = client["stocks"] 
+stockdb = client["stocks"]
 stock_domestic_collection = stockdb["domestic"]
 stock_international_collection = stockdb["international"]
 gmtodt_collection = stockdb["gmtodt"]
@@ -380,6 +381,8 @@ async def 주식(interaction: discord.Interaction, 판매니구매니: app_comma
         current_stock = user_data.get(user_stock_field, 0)  # 현재 보유량
 
         if 판매니구매니.value == "주식구매":
+            if num <= 0:
+                await interaction.response.send_message("주식은 1개 이상부터 구매 가능합니다.", ephemeral=True)
             # 잔액이 충분한지 확인
             if balance < total_amount:
                 await interaction.response.send_message("잔액이 부족합니다.", ephemeral=True)
@@ -396,6 +399,8 @@ async def 주식(interaction: discord.Interaction, 판매니구매니: app_comma
             )
 
         elif 판매니구매니.value == "주식판매":
+            if num <= 0:
+                await interaction.response.send_message("주식은 1개 이상부터 판매 가능합니다.", ephemeral=True)
             # 보유 주식이 충분한지 확인
             if current_stock < num:
                 await interaction.response.send_message(
@@ -480,9 +485,10 @@ async def 내주식(interaction: discord.Interaction):
         embed.add_field(name="보유 주식 없음", value="현재 보유한 주식이 없습니다.", inline=False)
 
     # 프로필 이미지 추가
-    embed.set_thumbnail(url=interaction.user.avatar.url if interaction.user.avatar else "https://cdn.discordapp.com/embed/avatars/0.png")
+    embed.set_thumbnail(
+        url=interaction.user.avatar.url if interaction.user.avatar else "https://cdn.discordapp.com/embed/avatars/0.png")
 
-    await interaction.response.send_message(embed=embed)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 @bot.tree.command(name='가위바위보하기', description='가위,바위,보자기 중 하나를 입력해주세요!')
@@ -511,10 +517,12 @@ async def 초대하기(interaction: discord.Interaction):
     view.add_item(button1)
     await interaction.response.send_message(view=view)
 
+
 @bot.tree.command(name='환율', description='현재 GM과 DT간의 환율을 알려드려요!')
 async def 환율(interaction: discord.Interaction):
     exchange_rates = gmtodt_collection.find_one({"codecheck": "code"})["gmtodt"]
     await interaction.response.send_message(f"현재 1DT(Dotori Token)의 가격은 {exchange_rates}GM입니다!")
+
 
 @bot.tree.command(name='환율투자', description='DT를 구매해요!')
 @app_commands.choices(판매야구매야=[
@@ -523,11 +531,14 @@ async def 환율(interaction: discord.Interaction):
 ])
 async def 환율투자(interaction: discord.Interaction, 판매야구매야: app_commands.Choice[str], num: int):
     exchange_rates = gmtodt_collection.find_one({"codecheck": "code"})["gmtodt"]
-    db_user = user_collection.find_one({"user_id": user.id})
+    user_id = interaction.user.id
+    db_user = user_collection.find_one({"user_id": user_id})
     balance = db_user.get("balancegm", 0)
     balancedt = db_user.get("balancedt", 0)
-    total_price = exchange_rates * num
-    if 판매야구매야.value == DT구매:
+    total_amount = exchange_rates * num
+    if 판매야구매야.value == "DT구매":
+        if num <= 0:
+            await interaction.response.send_message(f"DT는 1개 이상부터 구매 가능합니다.", ephemeral=True)
         if balance - total_amount < 0:
             await interaction.response.send_message(f"현재 보유하고 있는 GM이 부족합니다. 현재 보유하고 있는 GM: {balance}GM", ephemeral=True)
         else:
@@ -536,18 +547,21 @@ async def 환율투자(interaction: discord.Interaction, 판매야구매야: app
                 {"$inc": {"balancegm": -total_amount, "balancedt": num}},
                 upsert=True
             )
-            await interaction.response.send_message(f"성공적으로 {total_price}GM을 사용해 {num}DT를 구입했습니다!", ephemeral=True)
+            await interaction.response.send_message(f"성공적으로 {total_amount}GM을 사용해 {num}DT를 구입했습니다!", ephemeral=True)
     else:
+        if num <= 0:
+            await interaction.response.send_message(f"DT는 1개 이상부터 판매 가능합니다.", ephemeral=True)
         if balancedt - num < 0:
-            await interaction.response.send_message(f"현재 보유하고 있는 DT이 부족합니다. 현재 보유하고 있는 DT: {balancedt}DT", ephemeral=True)
+            await interaction.response.send_message(f"현재 보유하고 있는 DT이 부족합니다. 현재 보유하고 있는 DT: {balancedt}DT",
+                                                    ephemeral=True)
         else:
             user_collection.update_one(
                 {"user_id": user_id},
-                {"$inc": {"balancegm":+total_amount, "balancedt": -num}},
+                {"$inc": {"balancegm": +total_amount, "balancedt": -num}},
                 upsert=True
             )
-            await interaction.response.send_message(f"성공적으로 {num}DT를 팔아 {total_price}GM을 얻었습니다!", ephemeral=True)
-        
+            await interaction.response.send_message(f"성공적으로 {num}DT를 팔아 {total_amount}GM을 얻었습니다!", ephemeral=True)
+
 
 @bot.tree.command(name='도움말', description="게더의 명령어를 알려드려요!")
 async def 도움말(interaction: discord.Interaction):
@@ -574,7 +588,7 @@ async def 도움말(interaction: discord.Interaction):
     embed.add_field(name="/주식시장", value="현재 주식의 가격을 확인해요!", inline=False)
     embed.add_field(name="/가위바위보하기", value="저와 가위바위보 한판을 진행하요!", inline=False)
     embed.add_field(name="/ㅗ", value="헉...", inline=False)
-    await interaction.response.send_message(embed=embed)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 @bot.tree.command(name='ㅗ', description="for 욕쟁이들")
@@ -599,7 +613,7 @@ async def 정보(interaction: discord.Interaction):
     embed.add_field(name="작동 시간", value=uptime_str, inline=False)
     embed.add_field(name="나이", value="약 5개월", inline=False)
     embed.add_field(name="제작자", value="devloggerkr, poshil", inline=False)  # 제작자 정보
-    embed.add_field(name="버전", value="Ver. βeta 0.4.0", inline=False)
+    embed.add_field(name="버전", value="Ver. βeta 0.4.1", inline=False)
     embed.set_footer(text="GATHER")
     # 봇 추가 버튼 생성
     view = discord.ui.View()
@@ -609,7 +623,7 @@ async def 정보(interaction: discord.Interaction):
         style=discord.ButtonStyle.link
     )
     view.add_item(button)
-    await interaction.response.send_message(embed=embed, view=view)
+    await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
 
 @bot.tree.command(name='유저등록', description='유저를 게더 주식에 등록해요!')

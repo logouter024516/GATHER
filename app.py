@@ -11,7 +11,7 @@ load_dotenv()  # .env 파일 로드
 token = os.getenv("DISCORD_BOT_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")      
 # MongoDB 클라이언트 설정
-client = MongoClient(MONGO_URI) 
+client = MongoClient(MONGO_URI)
 userdb = client["user"]  # 데이터베이스 이름
 user_collection = userdb["user"]
 
@@ -42,6 +42,7 @@ jongshim2 = stock_domestic_collection.find_one({"company_name": "jongshim"})["pr
 lyundai1 = 0
 lyundai2 = stock_domestic_collection.find_one({"company_name": "lyundai"})["price"]
 
+
 # 봇 초대 URL 생성 함수
 def get_invite_url(bot_id):
     return f"https://discord.com/api/oauth2/authorize?client_id={bot_id}&permissions=8&scope=bot%20applications.commands"
@@ -65,7 +66,7 @@ async def on_ready():
 @bot.tree.command(name='공지하기', description="공지할 내용을 입력해주세요!")
 @app_commands.describe(title='공지할 내용의 제목을 입력해주세요!', inputs='공지할 내용을 입력해주세요!', code='관리자인지 확인하는 절차입니다!')
 async def 공지하기(interaction: discord.Interaction, title: str, inputs: str, code: int):
-    if code == 110010011: #관리자 코드입니다. 원하시는 숫자로 바꾸시면 됩니다. 기본 값은 110010011입니다.
+    if code == 110010011:  # 관리자 코드입니다. 원하시는 숫자로 바꾸시면 됩니다. 기본 값은 110010011입니다.
         embed = discord.Embed(title=title, description=inputs, color=0x62c1cc)
         await interaction.response.send_message(content="@everyone", embed=embed, ephemeral=False)
     else:
@@ -136,7 +137,8 @@ async def 세계주식소개(interaction: discord.Interaction):
     embed.add_field(name="은비디아(ENVIDIA)", value="분류코드: 018, 세계적인 전자제품 생산업체이며, 주로 ETX 그래픽카드를 판매합니다!", inline=False)
     embed.add_field(name="하이엇게임즈(HIOTGAMES)", value="분류코드: 097, 세계 1등 게임인 랭킹 오브 레전드와 FPS 게임 잘로란트를 제작한 회사입니다!",
                     inline=False)
-    embed.add_field(name="월마트(QALMART)", value="분류코드: 356, 나무나라 최대의 대형 마트 프렌차이즈며, 우리나라에서는 기마트라는 이름으로 운영됩니다!", inline=False)
+    embed.add_field(name="월마트(QALMART)", value="분류코드: 356, 나무나라 최대의 대형 마트 프렌차이즈며, 우리나라에서는 기마트라는 이름으로 운영됩니다!",
+                    inline=False)
     embed.add_field(name="화이저(PPIZER)", value="분류코드: 890, 세계적으로 유명한 의약품 회사로, 제일 믿을만한 의약품 기업 1위라는 타이틀을 가지고 있습니다!",
                     inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -155,8 +157,10 @@ async def 국내주식소개(interaction: discord.Interaction):
     embed.add_field(name="오지전자(OG ELECTRONICS)", value="분류코드: A-3, 세계에서 가장 모니터를 잘 만드는 회사입니다. 주로 WLED TV를 판매합니다!",
                     inline=False)
     embed.add_field(name="종심(JONGSHIM)", value="분류코드: E-7, 게이머공화국의 최대 가공식품 판매사입니다! 주로 라면과 과자를 판매합니다!", inline=False)
-    embed.add_field(name="련대(LYUNDAI)", value="분류코드: Y-9, 게이머공화국 최고의 자동차 제조 기술력을 가진 회사입니다! 원래는 중공업 회사였습니다!", inline=False)
+    embed.add_field(name="련대(LYUNDAI)", value="분류코드: Y-9, 게이머공화국 최고의 자동차 제조 기술력을 가진 회사입니다! 원래는 중공업 회사였습니다!",
+                    inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
+
 
 @bot.tree.command(name='주식시장', description='현재 주식의 가격을 확인합니다!')
 @app_commands.choices(국내야세계야=[
@@ -171,7 +175,7 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
             timestamp=datetime.datetime.utcnow()
         )
         rate_datas = stock_domestic_collection.find_one({"company_name": "SASUNG"})["rate"]
-        if rate_datas*100 < 100:
+        if rate_datas * 100 < 100:
             rate_datas = abs(100 - (rate_datas * 100))
             embed.add_field(name="A-1 사성전자",
                             value=f"{stock_domestic_collection.find_one({"company_name": "SASUNG"})["price"]}GM (-{rate_datas}%)",
@@ -183,7 +187,7 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
                             inline=False)
 
         rate_datao = stock_domestic_collection.find_one({"company_name": "OG"})["rate"]
-        if rate_datao*100 < 100:
+        if rate_datao * 100 < 100:
             rate_datao = abs(100 - (rate_datao * 100))
             embed.add_field(name="A-3 오지전자",
                             value=f"{stock_domestic_collection.find_one({"company_name": "OG"})["price"]}GM (-{rate_datao}%)",
@@ -194,9 +198,8 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
                             value=f"{stock_domestic_collection.find_one({"company_name": "OG"})["price"]}GM (+{rate_datao}%)",
                             inline=False)
 
-
         rate_dataj = stock_domestic_collection.find_one({"company_name": "jongshim"})["rate"]
-        if rate_dataj*100 < 100:
+        if rate_dataj * 100 < 100:
             rate_dataj = abs(100 - (rate_dataj * 100))
             embed.add_field(name="E-7 종심",
                             value=f"{stock_domestic_collection.find_one({"company_name": "jongshim"})["price"]}GM (-{rate_dataj}%)",
@@ -208,7 +211,7 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
                             inline=False)
 
         rate_datal = stock_domestic_collection.find_one({"company_name": "lyundai"})["rate"]
-        if rate_datal*100 < 100:
+        if rate_datal * 100 < 100:
             rate_datal = abs(100 - (rate_datal * 100))
             embed.add_field(name="Y-9 련대",
                             value=f"{stock_domestic_collection.find_one({"company_name": "lyundai"})["price"]}GM (-{rate_datal}%)",
@@ -228,7 +231,7 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
         )
         rate_datas = stock_international_collection.find_one({"company_name": "SASUNG"})["rate"]
         exchange_rates = gmtodt_collection.find_one({"codecheck": "code"})["gmtodt"]
-        if rate_datas*100 < 100:
+        if rate_datas * 100 < 100:
             rate_datas = abs(100 - (rate_datas * 100))
             embed.add_field(name="001 사성전자",
                             value=f"{stock_international_collection.find_one({"company_name": "SASUNG"})["price"]}DT ({exchange_rates * stock_international_collection.find_one({"company_name": "SASUNG"})["price"]}GM) (-{rate_datas}%)",
@@ -240,7 +243,7 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
                             inline=False)
 
         rate_datao = stock_international_collection.find_one({"company_name": "PEAR"})["rate"]
-        if rate_datao*100 < 100:
+        if rate_datao * 100 < 100:
             rate_datao = abs(100 - (rate_datao * 100))
             embed.add_field(name="002 배",
                             value=f"{stock_international_collection.find_one({"company_name": "PEAR"})["price"]}DT ({exchange_rates * stock_international_collection.find_one({"company_name": "PEAR"})["price"]}GM) (-{rate_datao}%)",
@@ -252,7 +255,7 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
                             inline=False)
 
         rate_dataj = stock_international_collection.find_one({"company_name": "ENVIDIA"})["rate"]
-        if rate_dataj*100 < 100:
+        if rate_dataj * 100 < 100:
             rate_dataj = abs(100 - (rate_dataj * 100))
             embed.add_field(name="018 은비디아",
                             value=f"{stock_international_collection.find_one({"company_name": "ENVIDIA"})["price"]}DT ({exchange_rates * stock_international_collection.find_one({"company_name": "ENVIDIA"})["price"]}GM) (-{rate_dataj}%)",
@@ -264,7 +267,7 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
                             inline=False)
 
         rate_datal = stock_international_collection.find_one({"company_name": "HIOTGAMES"})["rate"]
-        if rate_datal*100 < 100:
+        if rate_datal * 100 < 100:
             rate_datal = abs(100 - (rate_datal * 100))
             embed.add_field(name="097 하이엇게임즈",
                             value=f"{stock_international_collection.find_one({"company_name": "HIOTGAMES"})["price"]}DT ({exchange_rates * stock_international_collection.find_one({"company_name": "HIOTGAMES"})["price"]}GM) (-{rate_datal}%)",
@@ -300,6 +303,7 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
                             inline=False)
         await interaction.response.send_message(embed=embed)
 
+
 @bot.tree.command(name='주식', description='주식을 구매하거나 판매합니다!')
 @app_commands.choices(판매니구매니=[
     app_commands.Choice(name="판매", value="주식판매"),
@@ -309,13 +313,14 @@ async def 주식시장(interaction: discord.Interaction, 국내야세계야: app
     app_commands.Choice(name="세계", value="세계주식"),
     app_commands.Choice(name="국내", value="국내주식"),
 ])
-async def 주식(interaction: discord.Interaction, 판매니구매니: app_commands.Choice[str], 국내야세계야: app_commands.Choice[str], name: str, num: int):
+async def 주식(interaction: discord.Interaction, 판매니구매니: app_commands.Choice[str], 국내야세계야: app_commands.Choice[str],
+             name: str, num: int):
     user_id = interaction.user.id
 
     # 주식 코드 매핑 (분류코드: 회사명, 사용자 컬렉션 필드명)
     stock_map = {
         "세계주식": {
-            "001": ("SASUNG", "sasungin"),  
+            "001": ("SASUNG", "sasungin"),
             "002": ("PEAR", "pear"),
             "018": ("ENVIDIA", "envidia"),
             "097": ("HIOTGAMES", "hiotgames"),
@@ -323,9 +328,9 @@ async def 주식(interaction: discord.Interaction, 판매니구매니: app_comma
             "890": ("PPIZER", "ppizer"),
         },
         "국내주식": {
-            "A-1": ("SASUNG", "sasungdo"),  
-            "A-3": ("OG", "og"),  
-            "E-7": ("JONGSHIM", "jongshim"),  
+            "A-1": ("SASUNG", "sasungdo"),
+            "A-3": ("OG", "og"),
+            "E-7": ("JONGSHIM", "jongshim"),
             "Y-9": ("LYUNDAI", "lyundai"),
         }
     }
@@ -351,11 +356,22 @@ async def 주식(interaction: discord.Interaction, 판매니구매니: app_comma
             return
 
         price = stock_data["price"]
-        
+
+        exchange_data = gmtodt_collection.find_one({"codecheck": "code"})
+        if not exchange_data:
+            await interaction.response.send_message("환율 정보를 불러올 수 없습니다.", ephemeral=True)
+            return
+
+        exchange_rates = exchange_data.get("gmtodt", 1)  # 기본값 1 (에러 방지)
+
+        # 총 금액 계산
         if stock_category == "세계주식":
-            total_amount = num * price * exchange_rates  # 총 금액 계산 (구매 또는 판매)
+            total_amount = num * price * exchange_rates
         else:
-            total_amount = num * price  # 국내 주식은 환율 없이 계산
+            total_amount = num * price
+
+        # 정수 처리
+        total_amount = int(total_amount)
 
         # 유저 정보 가져오기
         user_data = user_collection.find_one({"user_id": user_id}) or {}
@@ -374,12 +390,16 @@ async def 주식(interaction: discord.Interaction, 판매니구매니: app_comma
                 {"$inc": {"balancegm": -total_amount, user_stock_field: num}},
                 upsert=True
             )
-            await interaction.response.send_message(f"{db_stock_name} 주식을 성공적으로 구매했습니다! (총 {total_amount:,}GM 사용)", ephemeral=True)
+            await interaction.response.send_message(
+                f"{db_stock_name} 주식을 성공적으로 구매했습니다! (총 {total_amount:,} GM 사용)", ephemeral=True
+            )
 
         elif 판매니구매니.value == "주식판매":
             # 보유 주식이 충분한지 확인
             if current_stock < num:
-                await interaction.response.send_message(f"{db_stock_name} 주식이 부족합니다. 현재 보유 주식: {current_stock}주", ephemeral=True)
+                await interaction.response.send_message(
+                    f"{db_stock_name} 주식이 부족합니다. 현재 보유 주식: {current_stock}주", ephemeral=True
+                )
                 return
 
             # 잔액 추가 & 주식 감소
@@ -388,12 +408,89 @@ async def 주식(interaction: discord.Interaction, 판매니구매니: app_comma
                 {"$inc": {"balancegm": total_amount, user_stock_field: -num}},
                 upsert=True
             )
-            await interaction.response.send_message(f"{db_stock_name} 주식을 성공적으로 판매했습니다! (총 {total_amount:,}GM 수익)", ephemeral=True)
+
+            if total_amount < 0:
+                await interaction.response.send_message(
+                    f"{db_stock_name} 주식을 성공적으로 판매했습니다! (총 {abs(total_amount):,} GM 손해)", ephemeral=True
+                )
+            elif total_amount == 0:
+                await interaction.response.send_message(
+                    f"{db_stock_name} 주식을 성공적으로 판매했습니다! (이득도 손해도 없습니다)", ephemeral=True
+                )
+            else:
+                await interaction.response.send_message(
+                    f"{db_stock_name} 주식을 성공적으로 판매했습니다! (총 {total_amount:,} GM 이득)", ephemeral=True
+                )
 
     else:
         await interaction.response.send_message("잘못된 주식 코드입니다.", ephemeral=True)
 
 
+@bot.tree.command(name="내주식", description="현재 보유한 주식을 확인합니다!")
+async def 내주식(interaction: discord.Interaction):
+    user_id = interaction.user.id
+
+    # 사용자의 주식 정보 가져오기
+    user_data = user_collection.find_one({"user_id": user_id}) or {}
+
+    # 국내 및 해외 주식 매핑
+    stock_map = {
+        "국내주식": {
+            "sasungdo": "사성전자",
+            "og": "OG",
+            "jongshim": "종심",
+            "lyundai": "련대",
+        },
+        "세계주식": {
+            "sasungin": "사성전자",
+            "pear": "PEAR",
+            "envidia": "은비디아",
+            "hiotgames": "HIOTGAMES",
+            "qalmart": "QALMART",
+            "ppizer": "PPIZER",
+        }
+    }
+
+    domestic_stocks = []
+    international_stocks = []
+
+    # 국내 주식 정보 수집 (0 이하이면 추가 안 함)
+    for key, name in stock_map["국내주식"].items():
+        amount = user_data.get(key, 0)
+        if amount > 0:
+            domestic_stocks.append(f"{name} - {amount}주")
+
+    # 해외 주식 정보 수집 (0 이하이면 추가 안 함)
+    for key, name in stock_map["세계주식"].items():
+        amount = user_data.get(key, 0)
+        if amount > 0:
+            international_stocks.append(f"{name} - {amount}주")
+
+    # Embed 메시지 생성
+    embed = discord.Embed(
+        title=f"{interaction.user.display_name}님의 주식",  # 제목에 유저의 닉네임 넣기
+        description="고객님의 잔액을 보여드립니다.",  # 설명 부분에 유저 ID
+        color=0xA0522D,
+        timestamp=datetime.datetime.utcnow()
+    )
+    embed.description = "고객님의 주식을 보여드립니다."
+
+    # 국내 주식 필드 추가 (보유한 주식이 있을 경우만)
+    if domestic_stocks:
+        embed.add_field(name="국내주식", value="\n".join(domestic_stocks), inline=False)
+
+    # 해외 주식 필드 추가 (보유한 주식이 있을 경우만)
+    if international_stocks:
+        embed.add_field(name="해외주식", value="\n".join(international_stocks), inline=False)
+
+    # 만약 주식이 하나도 없으면 메시지 추가
+    if not domestic_stocks and not international_stocks:
+        embed.add_field(name="보유 주식 없음", value="현재 보유한 주식이 없습니다.", inline=False)
+
+    # 프로필 이미지 추가
+    embed.set_thumbnail(url=interaction.user.avatar.url if interaction.user.avatar else "https://cdn.discordapp.com/embed/avatars/0.png")
+
+    await interaction.response.send_message(embed=embed)
 
 
 @bot.tree.command(name='가위바위보하기', description='가위,바위,보자기 중 하나를 입력해주세요!')
@@ -442,6 +539,7 @@ async def 도움말(interaction: discord.Interaction):
     embed.add_field(name="/유저등록", value="게더 주식서비스에 가입해요!", inline=False)
     embed.add_field(name="/유저탈퇴", value="게더 주식서비스에서 탈퇴해요!", inline=False)
     embed.add_field(name="/내통장", value="게더 주식의 통장을 확인해요!", inline=False)
+    embed.add_field(name="/내주식", value="보유한 게더 주식을 확인해요!", inline=False)
     embed.add_field(name="/주식시장", value="현재 주식의 가격을 확인해요!", inline=False)
     embed.add_field(name="/가위바위보하기", value="저와 가위바위보 한판을 진행하요!", inline=False)
     embed.add_field(name="/ㅗ", value="헉...", inline=False)
@@ -470,7 +568,7 @@ async def 정보(interaction: discord.Interaction):
     embed.add_field(name="작동 시간", value=uptime_str, inline=False)
     embed.add_field(name="나이", value="약 5개월", inline=False)
     embed.add_field(name="제작자", value="devloggerkr, poshil", inline=False)  # 제작자 정보
-    embed.add_field(name="버전", value="Ver. βeta 0.2.1", inline=False)
+    embed.add_field(name="버전", value="Ver. βeta 0.3.1", inline=False)
     embed.set_footer(text="GATHER")
     # 봇 추가 버튼 생성
     view = discord.ui.View()

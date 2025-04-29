@@ -524,7 +524,7 @@ async def 환율(interaction: discord.Interaction):
     await interaction.response.send_message(f"현재 1DT(Dotori Token)의 가격은 {exchange_rates}GM입니다!")
 
 
-@bot.tree.command(name='환율투자', description='DT를 구매해요!')
+@bot.tree.command(name='환율투자', description='DT를 거래해요!')
 @app_commands.choices(판매야구매야=[
     app_commands.Choice(name="판매", value="DT판매"),
     app_commands.Choice(name="구매", value="DT구매"),

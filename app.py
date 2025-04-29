@@ -657,6 +657,12 @@ async def 유저등록(interaction: discord.Interaction):
             "hiotgames": 0,
             "qalmart": 0,
             "ppizer": 0,
+            "raspcookie": 0,
+            "bitecoin": 0,
+            "robin": 0,
+            "gold": 0,
+            "silver": 0,
+            "tourmaline": 0,
             "registered_at": datetime.datetime.utcnow()
         }
         user_collection.insert_one(new_user)  # DB에 유저 데이터 삽입

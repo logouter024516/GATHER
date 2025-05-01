@@ -163,6 +163,22 @@ async def 국내주식소개(interaction: discord.Interaction):
                     inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
+@bot.tree.command(name='코인소개', description='가상화폐인 코인들의 이름을 표시해요!')
+async def 코인소개(interaction: discord.Interaction):
+    embed = discord.Embed(
+        title="게더 코인-UPGATHER",
+        description="게더 코인에 등록된 코인들입니다.",
+        color=discord.Color.green(),
+        timestamp=datetime.datetime.utcnow()
+    )
+    embed.add_field(name="바이트코인(BITE/COIN)", value="분류코드: B/T, 세계에서 가장 유명한 가상 화폐입니다!",
+                    inline=False)
+    embed.add_field(name="라즈베리쿠키(TOKEN/OF/RASPBERRYCOOKIE)", value="분류코드: A/C, 가격 변동이 하루에 3시간동안만 1분마다 일어나기 때문에 안전한 가상 화폐입니다!",
+                    inline=False)
+    embed.add_field(name="로빈(ROBIN/CHAIN/TRADE)", value="분류코드: R/N, 가격이 따로 없어 바이트코인이나 라즈베리쿠키로만 거래할 수 있는 특별한 가상 화폐입니다!",
+                    inline=False)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
 
 @bot.tree.command(name='주식시장', description='현재 주식의 가격을 확인해요!')
 @app_commands.choices(국내야세계야=[
@@ -574,6 +590,7 @@ async def 도움말(interaction: discord.Interaction):
     embed.add_field(name="/도움말", value="명령어 도움말을 알려드려요!", inline=False)
     embed.add_field(name="/정보", value="게더의 작동시간, 제작자, 나이, 게더초대링크를 알려드려요!", inline=False)
     embed.add_field(name="/공지하기", value="관리자코드를 사용하여 모든 서버원에게 공지를 해드려요!", inline=False)
+    embed.add_field(name="/코인소개", value="가상화폐인 코인들을 보여줘요!", inline=False)
     embed.add_field(name="/세계주식소개", value="주식 중 세계 주식에 해당되는 것들을 보여줘요!", inline=False)
     embed.add_field(name="/국내주식소개", value="주식 중 국내 주식에 해당되는 것들을 보여줘요!", inline=False)
     embed.add_field(name="/주식", value="주식을 구매하거나 판매해요!", inline=False)

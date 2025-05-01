@@ -115,7 +115,7 @@ async def 내통장(interaction: discord.Interaction):
         if master == 1:
             embed.add_field(name="마스터 랭크: ", value="당신은 1억 1천만GM 이상을 보유하고 있으므로 마스터등급입니다! 축하합니다!!", inline=False)
     else:
-        embed.add_field(name="게더 주식에 가입되어 있지 않습니다!", value="게더 주식에 가입하시려면 /유저등록 명령어를 사용해주세요!", inline=False)
+        embed.add_field(name="게더 트레이드에 가입되어 있지 않습니다!", value="게더 트레이드에 가입하시려면 /유저등록 명령어를 사용해주세요!", inline=False)
     embed.set_thumbnail(url=user.avatar.url)  # 프로필 사진을 썸네일로 설정
     await interaction.response.send_message(embed=embed, ephemeral=True)
 

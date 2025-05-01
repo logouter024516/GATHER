@@ -173,7 +173,7 @@ async def 코인소개(interaction: discord.Interaction):
     )
     embed.add_field(name="바이트코인(BITE/COIN)", value="분류코드: B/T, 세계에서 가장 유명한 가상 화폐입니다!",
                     inline=False)
-    embed.add_field(name="라즈베리쿠키(TOKEN/OF/RASPBERRYCOOKIE)", value="분류코드: A/C, 가격 변동이 하루에 3시간동안만 1분마다 일어나기 때문에 안전한 가상 화폐입니다!",
+    embed.add_field(name="라즈베리쿠키(TOKEN/OF/RASPBERRYCOOKIE)", value="분류코드: A/C, 가격 변동이 하루에 10분동안만 1분마다 일어나기 때문에 안전한 가상 화폐입니다!",
                     inline=False)
     embed.add_field(name="로빈(ROBIN/CHAIN/TRADE)", value="분류코드: R/N, 가격이 따로 없어 바이트코인이나 라즈베리쿠키로만 거래할 수 있는 특별한 가상 화폐입니다!",
                     inline=False)
